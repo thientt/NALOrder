@@ -1,0 +1,14 @@
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\NALOrder.Model.dll.config
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\NALOrder.Model.dll
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\NALOrder.Model.pdb
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\EntityFramework.dll
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\EntityFramework.SqlServer.dll
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\EntityFramework.xml
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\EntityFramework.SqlServer.xml
+E:\Projects\NALOrder\NALOrder.Model\obj\Debug\NALOrder.Model.dll
+E:\Projects\NALOrder\NALOrder.Model\obj\Debug\NALOrder.Model.pdb
+E:\Projects\NALOrder\NALOrder.Model\obj\Debug\NALOrder.Model.csprojResolveAssemblyReference.cache
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\NALOrder.Utilities.dll
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\log4net.dll
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\NALOrder.Utilities.pdb
+E:\Projects\NALOrder\NALOrder.Model\bin\Debug\log4net.xml

@@ -1,0 +1,186 @@
+﻿@model NALOrder.ViewModel.OrderViewModel
+
+@{
+
+    ViewBag.Title = "Order Detail";
+}
+<style>
+    div.line {
+        transform-origin: 0 100%;
+        height: 3px; /* Line width of 3 */
+        background: #A29C9C; /* Black fill */
+    }
+</style>
+
+@if (TempData["Status"] != null && !String.IsNullOrEmpty(TempData["Status"].ToString()))
+{
+    if (TempData["Status"] == "OK")
+    {
+        <div class="alert alert-success alert-dismissable fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <p>
+                The Order @TempData["Type"].ToString() was successfully
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger alert-dismissable fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <p>
+                The Order @TempData["Type"].ToString() was failed. Please try again
+            </p>
+        </div>
+    }
+
+}
+
+@if (!String.IsNullOrEmpty(ViewBag.Error))
+{
+    <div class="alert alert-danger alert-dismissable fade in" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <p>
+            Your orders fail. Please try again
+        </p>
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="text-center"><b> Order #@Model.Id</b></h2>
+        </div>
+
+        <div class="col-xs-12">
+            <p class="pull-left">Status: @Model.Status</p>
+            <p class="pull-right">
+                Order Data:
+                @if (Model.DateOrder.HasValue)
+                {
+                    @Model.DateOrder.Value.ToString("MM/dd/yyyy")
+                }
+            </p>
+        </div>
+
+        <div class="col-xs-12">
+            <h4>
+                Customer Information
+            </h4>
+            <div class="line"></div>
+            <p style="margin-top:20px;"></p>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 text-right">Name:</label>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(x => x.Name)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 text-right">Address:</label>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(x => x.Address)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 text-right">Email:</label>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(x => x.Email)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 text-right">Phone:</label>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(x => x.Phone)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 text-right">Country:</label>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(x => x.CounntryName)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <h4>
+                Order Detail
+            </h4>
+            <div class="line"></div>
+            <p style="margin-top:20px;"></p>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered" id="tblOrderDetail">
+                    <thead>
+                        <tr>
+                            <th style="width:50px;">#</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderDetail)
+                        {
+                            <tr>
+                                <td>@item.No</td>
+                                <td>@item.ProductName</td>
+                                <td>@item.Quality</td>
+                                <td>@String.Format("${0}", item.UnitPrice)</td>
+                                <td>@String.Format("${0}", @item.Total)</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td></td>
+                            <td><b>TOTAL</b></td>
+                            <td><b>@Model.OrderDetail.Sum(x => x.Quality)</b></td>
+                            <td></td>
+                            <td><b>@String.Format("${0}", Model.OrderDetail.Sum(x => x.Total))</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-xs-12 text-center">
+            @if (Model.Status.Equals("Rejected") || Model.Status.Equals("Approved"))
+            {
+            }
+            else
+            {
+                <input type="submit" value="Approve" name="submit" class="btn btn-info" />
+                <input type="submit" value="Reject" name="submit" class="btn btn-info" />
+            }
+            @Html.ActionLink("Back", "Index", "Management", null, htmlAttributes: new { @class = "btn btn-info" })
+        </div>
+    </div>
+}
+
+@section    Scripts{
+
+    <script>
+        $(window).ready(function () {
+        });
+    </script>
+}
+
+
+
+
+
+

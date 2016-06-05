@@ -1,0 +1,131 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using NALOrder.Infrastructures;
+
+@model IPagedList<NALOrder.ViewModel.ManagementOrderViewModel>
+
+@{
+    AjaxOptions ajaxPaging = new AjaxOptions()
+    {
+        UpdateTargetId = "tblManage",
+        HttpMethod = "GET",
+    };
+
+    AjaxOptions ajaxOption = new AjaxOptions
+    {
+        UpdateTargetId = "tblManage",
+        HttpMethod = "GET",
+    };
+
+    string currentSort = ViewBag.CurrentSort;
+    if (string.IsNullOrEmpty(currentSort))
+    {
+        currentSort = "DateSortOrder_Desc";
+    }
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="table-responsive" id="tblManage">
+            <table class="table table-hover table-bordered" id="tblOrder">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:40px;">ID</th>
+                        <th>
+                            @Ajax.ActionLink("Order Date", "GetOrder", Request.QueryString.ToRouteValueDictionary("sortOrder", (string)ViewBag.DateSortOrder), ajaxOption)
+                            @Html.SortIdentifier(currentSort, "DateSortOrder")
+                        </th>
+                        <th>Status</th>
+                        <th>
+                            @Ajax.ActionLink("Customer", "GetOrder", Request.QueryString.ToRouteValueDictionary("sortOrder", (string)ViewBag.CustomerSortOrder), ajaxOption)
+                            @Html.SortIdentifier(currentSort, "CustomerSortOrder")
+                        </th>
+                        <th>Country</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        if (item.Status.Equals("Approved"))
+                        {
+                            <tr class="alert-success">
+                                <td class="text-left">
+                                    @item.Id
+                                </td>
+                                <td>
+                                    @if (item.OrderDate.HasValue)
+                                    {
+                                        @item.OrderDate.Value.ToString("MM/dd/yyyy");
+                                    }
+                                </td>
+                                <td>@item.Status</td>
+                                <td>
+                                    @Html.ActionLink(item.Customer, "OrderDetail", routeValues: new { id = item.Id })
+                                </td>
+                                <td>@item.Country</td>
+                                <td>@String.Format("${0}", @item.Total)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            if (item.Status.Equals("Rejected"))
+                            {
+                                <tr class="alert-danger">
+                                    <td class="text-left">
+                                        @item.Id
+                                    </td>
+                                    <td>
+                                        @if (item.OrderDate.HasValue)
+                                        {
+                                            @item.OrderDate.Value.ToString("MM/dd/yyyy");
+                                        }
+                                    </td>
+                                    <td>@item.Status</td>
+                                    <td>
+                                        @Html.ActionLink(item.Customer, "OrderDetail", routeValues: new { id = item.Id })
+                                    </td>
+                                    <td>@item.Country</td>
+                                    <td>@String.Format("${0}", @item.Total)</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @item.Id
+                                    </td>
+                                    <td>
+                                        @if (item.OrderDate.HasValue)
+                                        {
+                                            @item.OrderDate.Value.ToString("MM/dd/yyyy");
+                                        }
+                                    </td>
+                                    <td>@item.Status</td>
+                                    <td>
+                                        @Html.ActionLink(item.Customer, "OrderDetail", routeValues: new { id = item.Id })
+                                    </td>
+                                    <td>@item.Country</td>
+                                    <td>@String.Format("${0}", @item.Total)</td>
+                                </tr>
+                            }
+                        }
+
+
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6">
+                            <div id="contentPager" class="pull-right">
+                                @Html.PagedListPager(Model, page => Url.Action("GetOrder",
+                     new { sortOrder = ViewBag.CurrentSort, page }),
+                 PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(ajaxPaging))
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </div>
+</div>

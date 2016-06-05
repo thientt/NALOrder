@@ -1,0 +1,11 @@
+﻿@model NALOrder.ViewModel.FilterPageViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div id="tableManage">
+        @Html.Action("GetOrder", routeValues: new { sortOrder = Model.SortOrder, page = Model.Page })
+    </div>
+</div>
+

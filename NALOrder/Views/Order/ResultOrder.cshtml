@@ -1,0 +1,32 @@
+﻿@model bool
+
+@{
+    ViewBag.Title = "Result";
+}
+
+
+@if (Model)
+{
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="col-sm-3 hidden-xs">
+                <img src="~/Images/success.png" />
+            </div>
+            <div class="col-xs-12 col-sm-9">
+                <h3>
+                    <b>
+                        Order Completed Successfully!
+                    </b>
+                </h3>
+                <p>Thank you for purchasing a campaign with us - we appreciate your business.</p>
+                <p>You will receive a confirmation email shortly.</p>
+                @Html.ActionLink("New Order", "Index", "Order", null, htmlAttributes: new { @class = "btn btn-info" })
+            </div>
+        </div>
+    </div>
+}
+else
+{
+
+}
+

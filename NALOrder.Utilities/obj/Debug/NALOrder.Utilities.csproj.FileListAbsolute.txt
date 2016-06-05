@@ -1,0 +1,6 @@
+E:\Projects\NALOrder\NALOrder.Utilities\bin\Debug\NALOrder.Utilities.dll
+E:\Projects\NALOrder\NALOrder.Utilities\bin\Debug\NALOrder.Utilities.pdb
+E:\Projects\NALOrder\NALOrder.Utilities\bin\Debug\log4net.dll
+E:\Projects\NALOrder\NALOrder.Utilities\bin\Debug\log4net.xml
+E:\Projects\NALOrder\NALOrder.Utilities\obj\Debug\NALOrder.Utilities.dll
+E:\Projects\NALOrder\NALOrder.Utilities\obj\Debug\NALOrder.Utilities.pdb

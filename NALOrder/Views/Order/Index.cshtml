@@ -1,0 +1,297 @@
+﻿@model NALOrder.ViewModel.OrderViewModel
+
+@{
+
+    ViewBag.Title = "Order";
+}
+<style>
+    div.line {
+        transform-origin: 0 100%;
+        height: 3px; /* Line width of 3 */
+        background: #A29C9C; /* Black fill */
+    }
+</style>
+
+@if (!String.IsNullOrEmpty(ViewBag.Error))
+{
+    <div class="alert alert-danger alert-dismissable fade in" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <p>
+            Your orders fail. Please try again
+        </p>
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="text-center"><b> New Order</b></h2>
+        </div>
+
+        <div class="col-xs-12">
+            <p class="pull-left">Status: New</p>
+            <p class="pull-right">Order Data: @DateTime.Now.ToString("dd/MM/yyy") </p>
+        </div>
+
+        <div class="col-xs-12">
+            <h4>
+                Customer Information
+            </h4>
+            <div class="line"></div>
+            <p style="margin-top:20px;"></p>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Name<span class="required">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.Name, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(x => x.Name)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Address</label>
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(x => x.Address, htmlAttributes: new { @class = "form-control", @rows = "3" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Email<span class="required">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.Email, htmlAttributes: new { @class = "form-control", @type = "email" })
+                            @Html.ValidationMessageFor(x => x.Email)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Phone</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(x => x.Phone, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Country</label>
+                        <div class="col-sm-8">
+                            @Html.DropDownListFor(x => x.CountryId, new SelectList(Model.Countries, "ID", "Name", "Country..."), htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <h4>
+                Order Detail
+            </h4>
+            <div class="line"></div>
+            <p style="margin-top:20px;"></p>
+        </div>
+
+        <div class="col-xs-12">
+
+            <div class="pull-right">
+                <button class="btn btn-link" id="btnAddNew" type="button">Add Row</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered" id="tblOrderDetail">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.OrderDetail.Count; i++)
+                        {
+                            @Html.EditorFor(x => Model.OrderDetail[i], "OrderDetail")
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td><b>TOTAL</b></td>
+                            <td><label id="totalQty"></label></td>
+                            <td></td>
+                            <td><label id="totalPrice"></label></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-xs-12 text-center"> <input type="submit" value="Submit" class="btn btn-primary" /></div>
+    </div>
+}
+
+<div class="hidden">
+    @Html.DropDownList("ProductName", new SelectList(Model.Products, "ID", "ProductName"), "--- Select---", htmlAttributes: new { @class = "form-control", @id = "producttest" })
+</div>
+
+
+@section    Scripts{
+
+    <script src="~/Scripts/jquery-2.2.3.js"></script>
+    <script>
+        $(window).ready(function () {
+
+            //focuse text Name while document onload
+            $('#Name').focus();
+
+            $('#btnAddNew').click(function () {
+                var rows = $('#tblOrderDetail > tbody > tr');
+                var max = maxId(rows);
+                No = rows.length;
+                addRow(No, max + 1);
+            });
+
+            $('#tblOrderDetail > tbody').on('keyup mouseup', '.quantity', function () {
+                var index = ($(this).attr('name').split('[')[1].split(']')[0]);
+                var price = ($("#OrderDetail_" + index + "__Price").text()).replace('$', '');
+                var total = (price * this.value).toFixed(2);
+                $("#OrderDetail_" + index + "__Total").text('$' + total);
+
+                //total order
+                TotalQty();
+            });
+
+            $('#tblOrderDetail > tbody').on('change', '.product', function () {
+                var index = ($(this).attr('name').split('[')[1].split(']')[0]);
+
+                $.ajax({
+                    url: '@Url.Action("GetPrice")',
+                    data: { id: $(this).val() },
+                    type: "GET",
+                    success: function (res) {
+                        $('#OrderDetail_' + index + '__Price').text('$' + res.data);
+                        var qty = $('#OrderDetail_' + index + '__Quality').val();
+                        $('#OrderDetail_' + index + '__Total').text('$' + (qty * (res.data)).toFixed(2));
+
+                        //total order
+                        TotalQty();
+                    },
+
+                    error: function (res) {
+                        $('#OrderDetail_' + index + '__Price').text('$0');
+                    }
+                })
+            });
+
+            $('#tblOrderDetail > tbody').on('click', '.btn-delete', function () {
+                $(this).parent().parent().remove();
+
+                //update index column
+                $("#tblOrderDetail > tbody tr").each(function () {
+                    $(this).find("td").first().html($(this).index());
+                });
+
+                TotalQty();
+            });
+
+        });
+
+        function maxId(rows) {
+            var max = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var columns = $(rows[i]).find('td');
+                for (var j = 0; j < columns.length; j++) {
+                    if (j == 1) {
+                        var name = ($(columns[j]).find('select:first').attr('name'));
+                        if (name != undefined) {
+                            var id = (name.split('[')[1].split(']')[0]);
+                            max = Math.max(max, id);
+                        }
+                    }
+                }
+            }
+
+            return max;
+        }
+
+        function TotalQty() {
+            var sum = 0;
+            var quantity = 0;
+            $('.price').each(function () {
+
+                calculateQty();
+                calculateTotal();
+            });
+        }
+
+        function addRow(index, max) {
+
+            //Create row
+            var rows = $('<tr/>');
+
+            //append NO
+            var no = $('<td/>').append(index);
+            rows.append(no);
+
+            //append product
+            var product = $('<td/>').append($('<select class="form-control product" name="OrderDetail[' + max + '].ProductId" id="OrderDetail_' + max + '__ProductId">').append($('#producttest').html()));
+            rows.append(product);
+
+            //append Qty
+            var qty = $('<td />').append('<input type="number" min="0" name="OrderDetail[' + max + '].Quality" id="OrderDetail_' + max + '__Quality" value="0"' +
+                'class="form-control quantity" data-val="true" data-val-number="The field Quality must be a number." data-val-range="The field Quality must be between 0 and 2147483647." data-val-range-max="2147483647" data-val-range-min="0" data-val-required="The Quality field is required." />');
+            rows.append(qty);
+
+            //append Price
+            var price = $('<td />').append('<span name="OrderDetail[' + max + '].Price" id="OrderDetail_' + max + '__Price" class="price">$0</span>');
+            rows.append(price);
+
+            //append total
+            var total = $('<td />').append('<span name="OrderDetail[' + max + '].Total" id="OrderDetail_' + max + '__Total" class="total">$0</span>');
+            rows.append(total);
+
+            //append button delete
+            rows.append("<td><input type='button' class='btn btn-danger btn-sm btn-delete' value ='Delete'/></td>");
+
+            //append row
+            $("#tblOrderDetail > tbody").append(rows);
+        }
+
+        function calculateQty() {
+            var sum = 0;
+            // iterate through each td based on class and add the values
+            $(".quantity").each(function () {
+
+                var value = $(this).val();
+
+                // add only if the value is number
+                if (!isNaN(value) && value.length != 0) {
+                    sum += parseFloat(value);
+                }
+            });
+            $('#totalQty').text(sum);
+        }
+
+        function calculateTotal() {
+
+            var sum = 0;
+            // iterate through each td based on class and add the values
+            $(".total").each(function () {
+
+                var value = $(this).text().replace('$', '');
+                // add only if the value is number
+                if (!isNaN(value) && value.length != 0) {
+                    sum += parseFloat((parseFloat(value).toFixed(2)));
+                }
+            });
+            $('#totalPrice').text('$' + sum);
+        }
+    </script>
+}
+
+

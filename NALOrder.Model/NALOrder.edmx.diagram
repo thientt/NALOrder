@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="5c1979471eae4645a7910d0d896a03d1" Name="Diagram1">
+        <EntityTypeShape EntityType="OrderAppModel.Country" Width="1.5" PointX="0.75" PointY="1.375" />
+        <EntityTypeShape EntityType="OrderAppModel.Customer" Width="1.5" PointX="3" PointY="1" />
+        <EntityTypeShape EntityType="OrderAppModel.OrderDetail" Width="1.5" PointX="7.5" PointY="1" />
+        <EntityTypeShape EntityType="OrderAppModel.Order" Width="1.5" PointX="5.25" PointY="1.125" />
+        <EntityTypeShape EntityType="OrderAppModel.Product" Width="1.5" PointX="5.25" PointY="5.375" />
+        <EntityTypeShape EntityType="OrderAppModel.Role" Width="1.5" PointX="7.75" PointY="5.625" />
+        <EntityTypeShape EntityType="OrderAppModel.sysdiagram" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="OrderAppModel.User" Width="1.5" PointX="10" PointY="5" />
+        <AssociationConnector Association="OrderAppModel.FK_Customers_Countries" />
+        <AssociationConnector Association="OrderAppModel.FK_Orders_Customers" />
+        <AssociationConnector Association="OrderAppModel.FK_OrderDetails_Orders" />
+        <AssociationConnector Association="OrderAppModel.FK_OrderDetails_Products" />
+        <AssociationConnector Association="OrderAppModel.FK_SYS_Users_SYS_Roles" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
